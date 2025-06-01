@@ -1,11 +1,9 @@
 import json
 from dataclasses import asdict
 from typing import Any
-
 import requests
-
 import ENV
-from api.login_methods import LoginApi
+
 
 
 class HttpMethods:
@@ -73,12 +71,12 @@ class HttpMethods:
         result = requests.patch(url, headers=header, cookies=HttpMethods.cookie)
         return result
 
-    @staticmethod
-    def archive_entity(endpoint: str, data: Any, user: str, passwd: str) -> requests.Response:
-        """
-        Метод для архивации любой сущности
-        """
-        token = LoginApi.get_token(user=user, passwd=passwd)
-        body = asdict(data)
-        return HttpMethods.post(url=ENV.WISLA_URL + endpoint, body=body, header=token)
+    # @staticmethod
+    # def archive_entity(endpoint: str, data: Any, user: str, passwd: str) -> requests.Response:
+    #     """
+    #     Метод для архивации любой сущности
+    #     """
+    #     token = LoginApi.get_token(user=user, passwd=passwd)
+    #     body = asdict(data)
+    #     return HttpMethods.post(url=ENV.WISLA_URL + endpoint, body=body, header=token)
 
