@@ -62,3 +62,21 @@ class TestContractorsApi:
         result = ContractorsAPI.get_list_contractors()
         assert result.status_code == 200, f"Ошибка , код ответа"
         assert result.json() is not None
+
+    @pytest.fixture()
+    def create_contractor(self,party_data):
+        response = ContractorsAPI.create_contractor(party_data, ENV.ROOT_NAME, ENV.ROOT_PASS)
+        yield response
+
+    @allure.title("Архивация контрагента")
+    def test_archive_contractor(self,create_contractor):
+        response = ContractorsAPI.get_list_contractors() # Запрашиваем список всех контрагентов, потому что в ответе при создании контрагента приходит пустой json
+        result = response.json() # Через переменную , что бы найти по ID последнего созданного контрагента
+        id_entity = result["list"][0]["id"] # берем в переменную id контрагента
+        print(id_entity)
+        result = ContractorsAPI.archive_contractor(id_entity)
+        print(result.text)
+        assert result.status_code == 200
+
+
+
