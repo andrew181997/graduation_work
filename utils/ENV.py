@@ -10,7 +10,7 @@ BD_PORT = 5432
 BD_USER = "wisla"
 BD_NAME = "wisla"
 """====================USERS=================="""
-ADMIN_OPERATOR_NAME = "andrew1897@yandex.ru"
+ADMIN_OPERATOR_NAME = "q@q.ru"
 ADMIN_OPERATOR_PASS = "0000"
 
 OPERATOR_NAME = "andrew1897@yandex.ru"

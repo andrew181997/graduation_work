@@ -2,11 +2,11 @@ import allure
 import time
 from dataclasses import asdict
 import requests
-from api.login_methods import LoginApi
+from api.api_login_methods import LoginApi
 from api.api_methods import HttpMethods
 
 # from utils.bd_controll.halpers.user_data_from_name import get_party_data
-import ENV
+from utils import ENV
 from api.module.user import UserData
 
 
@@ -25,7 +25,7 @@ class UsersAPI:
             "roles": [],
             "status": []
             }
-        result = HttpMethods.post(url=ENV.WISLA_URL+UsersAPI.endpoint,
+        result = HttpMethods.post(url=ENV.WISLA_URL + UsersAPI.endpoint,
                                   body=body,
                                   header=token)
         return result

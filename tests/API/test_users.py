@@ -1,13 +1,11 @@
 import pytest
 import allure
-from dataclasses import replace,asdict
-import ENV
-from ENV import OPERATOR_PASS, ROOT_PASS
-from api.api_methods import HttpMethods
-from api.login_methods import LoginApi
+from dataclasses import replace
+from utils import ENV
+from utils.ENV import ROOT_PASS
+from api.api_login_methods import LoginApi
 from api.module.user import UserData
-from api.user_methods import UsersAPI
-import copy
+from api.api_users_methods import UsersAPI
 import uuid
 
 class TestContractorsApi:
@@ -57,7 +55,7 @@ class TestContractorsApi:
     ])
     def test_create_user(self,user_data, user_data_modifications, expected_status):
         test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data,ENV.ROOT_NAME,ROOT_PASS)
+        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
         print(response.status_code)
         print(response.text)
         assert response.status_code == expected_status, \
@@ -78,7 +76,7 @@ class TestContractorsApi:
     ])
     def test_block_user(self,user_data,user_data_modifications, expected_status):
         test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data,ENV.ROOT_NAME,ENV.ROOT_PASS)
+        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ENV.ROOT_PASS)
         response_data = response.json()
         entity_id = response_data.get("id")
         result = UsersAPI.block_user(entity_id)
@@ -99,7 +97,7 @@ class TestContractorsApi:
     ])
     def test_archive_user(self,user_data,user_data_modifications, expected_status):
         test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data,ENV.ROOT_NAME,ROOT_PASS)
+        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
         response_data = response.json()
         entity_id = response_data.get("id")
         is_block = UsersAPI.block_user(entity_id)
@@ -122,7 +120,7 @@ class TestContractorsApi:
     ])
     def test_clean_up_user(self,user_data,user_data_modifications, expected_status):
         test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data,ENV.ROOT_NAME,ROOT_PASS)
+        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
         response_data = response.json()
         entity_id = response_data.get("id")
         UsersAPI.clean_up(entity_id)

@@ -1,9 +1,7 @@
 import json
-from dataclasses import asdict
-from typing import Any
-import requests
-import ENV
 
+import allure
+import requests
 
 
 class HttpMethods:
@@ -80,3 +78,16 @@ class HttpMethods:
     #     body = asdict(data)
     #     return HttpMethods.post(url=ENV.WISLA_URL + endpoint, body=body, header=token)
 
+    @staticmethod
+    def attach_response_data(result: requests.Response):
+        """
+        Метод для прикрепления результатов в allure отчет, если запрос успешен будет прикреплен url и код ответа
+        если возникает ошибка (код не 200 и не 202), то будет прикреплен url, код ответа и тело ответа
+        :param result: результат отправки запроса
+        :return: результат отправки запроса
+        """
+        if result.status_code in (200, 202):
+            allure.attach(f"Request:{result.request.url}\nSTATUS:{result.status_code}")
+        else:
+            allure.attach(f"Request:{result.request.url}\nSTATUS:{result.status_code}\n{result.json()}")
+        return result

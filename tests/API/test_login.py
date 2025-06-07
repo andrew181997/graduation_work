@@ -1,7 +1,7 @@
 import allure
 import pytest
-from api.login_methods import LoginApi
-import ENV
+from api.api_login_methods import LoginApi
+from utils import ENV
 
 
 @pytest.mark.acceptance

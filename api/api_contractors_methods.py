@@ -1,8 +1,8 @@
 import requests
 from dataclasses import asdict
-import ENV
+from utils import ENV
 from api.api_methods import HttpMethods
-from api.login_methods import LoginApi
+from api.api_login_methods import LoginApi
 from api.module.contractors import ContractorData
 
 

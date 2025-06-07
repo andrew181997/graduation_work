@@ -1,5 +1,5 @@
 from api.api_methods import HttpMethods
-import ENV
+from utils import ENV
 
 
 class LoginApi:
