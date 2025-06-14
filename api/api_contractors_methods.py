@@ -4,6 +4,7 @@ from utils import ENV
 from api.api_methods import HttpMethods
 from api.api_login_methods import LoginApi
 from api.module.contractors import ContractorData
+from typing import Optional
 
 
 class ContractorsAPI:
@@ -36,14 +37,27 @@ class ContractorsAPI:
         return result
 
     @staticmethod
-    def create_contractor(data: ContractorData,user,passwd) -> requests.Response:
+    def create_contractor(contractor: ContractorData) -> requests.Response:
         """
         Метод для создания контрагента с указанным именем
+        # :param name: имя контрагента
         :return: Объект ответа
         """
         endpoint = "/engine/api/v1/parties/save"
-        token = LoginApi.get_token(user=user, passwd=passwd)
-        body = asdict(data)
+        token = LoginApi.get_token(user=ENV.ROOT_NAME, passwd=ENV.ROOT_PASS)
+        body = asdict(contractor)
+        # body = {'id': None, 'ownerId': None, 'ownerName': None, 'creationDate': None, 'updateDate': None, 'tags': [],
+        #         'customFields': [], 'editByOwnerOnly': False, 'extendedEntity': None, 'closeDate': None, 'name':
+        #             f'{name}', 'parentPartyIds': None, 'parentPartyNames': None, 'partyRoles': ['CUSTOMER'],
+        #         'status': 'ACTIVE', 'description': None, 'phone': '',
+        #         'addressDto': {'country': '', 'city': '', 'street': '', 'house': '',
+        #                        'floor': '', 'room': '', 'postcode': ''},
+        #         'users':users, 'slaSupplier': False, 'serviceSupplier': False, 'customer': False, 'active': False,
+        #         'autoPublishReport': True, 'hasRestrictions': False,
+        #         'roles': {'slaSupplier': None, 'serviceSupplier': None, 'customer': True},
+        #         'partyReport': {'fullNameAgreed': '', 'jobTitleAgreed': '',
+        #                         'fullNameApproved': '', 'jobTitleApproved': ''},
+        #         'hierarchyPath': None}
         result = HttpMethods.post(url=ENV.WISLA_URL + endpoint, body=body, header=token)
         return result
 

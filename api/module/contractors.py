@@ -1,4 +1,6 @@
+import uuid
 from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 
 # @dataclass
@@ -21,14 +23,11 @@ from dataclasses import dataclass, field
 #     service_supplier: bool = False # является провайдером сервиса?
 #     customer: bool = False # является потребителем?
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Any
 
 @dataclass
 class ContractorData:
-    # customFields: List[str] = field(default_factory=list)
     editByOwnerOnly: int = 0
-    name: str = "test_python111111"
+    name: str = f"test_party_{uuid.uuid4().hex[:8]}"
     partyRoles: List[str] = field(default_factory=lambda: ["SLA_SUPPLIER", "SERVICE_SUPPLIER", "CUSTOMER"])
     status: str = "ACTIVE"
     addressDto: Dict[str, Any] = field(default_factory=dict)
