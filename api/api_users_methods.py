@@ -32,7 +32,7 @@ class UsersAPI:
 
 
     @staticmethod
-    def create_user(user_data: UserData,user,passwd) -> requests.Response:
+    def create_user(user_data: UserData) -> requests.Response:
         """
         Создает пользователя через API
 
@@ -45,7 +45,7 @@ class UsersAPI:
         # Конвертируем dataclass в словарь
         body = asdict(user_data)
         endpoint = "/engine/api/v1/users/save"
-        token = LoginApi.get_token(user=user, passwd=passwd)
+        token = LoginApi.get_token(user=ENV.ROOT_NAME, passwd=ENV.ROOT_PASS)
 
         result = HttpMethods.post(url=ENV.WISLA_URL + endpoint, body=body, header=token)
         return result

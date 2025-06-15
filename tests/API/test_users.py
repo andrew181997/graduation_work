@@ -10,73 +10,48 @@ import uuid
 
 class TestContractorsApi:
 
-    @pytest.fixture
-    def user_data(self):
-        random_email = f"test_user_{uuid.uuid4().hex[:8]}@example.com"
-        return UserData(
-            editByOwnerOnly=0,
-            login=random_email,
-            fullName="Test User",
-            userRoles=["SIMPLE_USER"],
-            phone="",
-            newPassword="secure_password123",
-            additionalEmails=[],
-            address={},
-            preferences={
-                "troubleTicketsPopup": 1,
-                "slaReportsPublishPopup": 0,
-                "welcomeMessagePopup": 0,
-                "actionEventPopup": 0,
-                "useScale": 1,
-                "ips": [""],
-                "notificationSubscriptions": [],
-                "mobileNotificationSubscriptions": [],
-                "notificationChannels": []
-            },
-            contracts=[],
-            parties=[],
-            confirmPassword="secure_password123"
-        )
-
     @allure.title("Проверка кода ответа на корректный запрос получения списка пользователей")
-    def test_get_list_users(self, ):
+    def test_get_list_users(self):
         result = UsersAPI.get_list_users()
         print(result.json())
         assert result.status_code == 200
 
 
     @allure.title("Проверка запроса на создание пользователя")
-    @pytest.mark.parametrize("user_data_modifications, expected_status", [
-        ({"userRoles": ["SIMPLE_USER"]}, 200),
-        ({"userRoles": ["SIMPLE_USER", "SLA_OPERATOR"]}, 200),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"]}, 200),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"]}, 200),
-        ({"userRoles": []}, 200)
+    @pytest.mark.parametrize("roles,expected_status",[
+        (["SIMPLE_USER"], 200),
+        (["SIMPLE_USER", "SLA_OPERATOR"], 200),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"], 200),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"], 200),
+        ([], 200),
+        (["INVALID_USER"], 400)
     ])
-    def test_create_user(self,user_data, user_data_modifications, expected_status):
-        test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
-        print(response.status_code)
-        print(response.text)
-        assert response.status_code == expected_status, \
-            f"Ожидался {expected_status}, получили {response.status_code}. Ответ: {response.text}"
+    def test_create_user(self,roles, expected_status):
+        user = UserData()
+        # Подменяем userRoles
+        user.userRoles = roles
+        # Отправляем запрос
+        response = UsersAPI.create_user(user)
+        assert response.status_code == expected_status,f"Ожидался {expected_status}, получили {response.status_code}. Ответ: {response.text}"
+        if expected_status == 200:
+            response_data = response.json()
+            assert set(response_data["userRoles"]) == set(roles), "Роли не совпадают"
 
-        response_data = response.json()
-
-        assert response_data.get("login") == test_data.login, "Логин не совпадает"
-        assert response_data.get("userRoles") == test_data.userRoles, "Роль не совпадает"
 
     @allure.title("Проверка , что нет возможности залогиниться блокированному пользователю")
-    @pytest.mark.parametrize("user_data_modifications, expected_status", [
-        ({"userRoles": ["SIMPLE_USER"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"]}, 401),
-        ({"userRoles": []}, 401)
+    @pytest.mark.parametrize("roles,expected_status", [
+        (["SIMPLE_USER"], 401),
+        (["SIMPLE_USER", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"], 401),
+        ([], 401)
     ])
-    def test_block_user(self,user_data,user_data_modifications, expected_status):
-        test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ENV.ROOT_PASS)
+    def test_block_user(self,roles, expected_status):
+        user = UserData()
+        # Подменяем userRoles
+        user.userRoles = roles
+        # Отправляем запрос
+        response = UsersAPI.create_user(user)
         response_data = response.json()
         entity_id = response_data.get("id")
         result = UsersAPI.block_user(entity_id)
@@ -88,16 +63,19 @@ class TestContractorsApi:
         assert result_login.status_code == expected_status , f"Код ответа {result_login.status_code}"
 
     @allure.title("Проверка , что нет возможности залогиниться архивному пользователю")
-    @pytest.mark.parametrize("user_data_modifications, expected_status", [
-        ({"userRoles": ["SIMPLE_USER"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"]}, 401),
-        ({"userRoles": []}, 401)
+    @pytest.mark.parametrize("roles,expected_status", [
+        (["SIMPLE_USER"], 401),
+        (["SIMPLE_USER", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"], 401),
+        ([], 401)
     ])
-    def test_archive_user(self,user_data,user_data_modifications, expected_status):
-        test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
+    def test_archive_user(self,roles, expected_status):
+        user = UserData()
+        # Подменяем userRoles
+        user.userRoles = roles
+        # Отправляем запрос
+        response = UsersAPI.create_user(user)
         response_data = response.json()
         entity_id = response_data.get("id")
         is_block = UsersAPI.block_user(entity_id)
@@ -111,16 +89,19 @@ class TestContractorsApi:
         assert result_login.status_code == expected_status, f"Код ответа {result_login.status_code}"
 
     @allure.title("Проверка , что нет возможности залогиниться удаленному пользователю")
-    @pytest.mark.parametrize("user_data_modifications, expected_status", [
-        ({"userRoles": ["SIMPLE_USER"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"]}, 401),
-        ({"userRoles": ["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"]}, 401),
-        ({"userRoles": []}, 401)
+    @pytest.mark.parametrize("roles,expected_status", [
+        (["SIMPLE_USER"], 401),
+        (["SIMPLE_USER", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR", "SLA_OPERATOR"], 401),
+        (["SIMPLE_USER", "SYSTEM_ADMINISTRATOR"], 401),
+        ([], 401)
     ])
-    def test_clean_up_user(self,user_data,user_data_modifications, expected_status):
-        test_data = replace(user_data, **user_data_modifications) # Копируем в переменную тестовые данные для теста
-        response = UsersAPI.create_user(test_data, ENV.ROOT_NAME, ROOT_PASS)
+    def test_clean_up_user(self,roles, expected_status):
+        user = UserData()
+        # Подменяем userRoles
+        user.userRoles = roles
+        # Отправляем запрос
+        response = UsersAPI.create_user(user)
         response_data = response.json()
         entity_id = response_data.get("id")
         UsersAPI.clean_up(entity_id)
