@@ -1,11 +1,9 @@
 import allure
-import pytest
 from api.api_login_methods import LoginApi
 from utils import ENV
 
 
-@pytest.mark.acceptance
-@allure.suite("Проверка API авторизации")
+
 class TestLoginAPI:
 
     @staticmethod
