@@ -1,20 +1,14 @@
 import time
-
 import allure
 import pytest
 import uuid
-
 from api.module.contractors import ContractorData
-from tests.API.test_contractors import TestContractorsApi
 from api.api_methods import HttpMethods
 from api.api_contractors_methods import ContractorsAPI
 from page_objects.contractors import Contractors, ContractorsFilters
 from page_objects.common_entity_lists_elements import EntityListElements
-from utils import ENV
 
 
-# from page_objects.entities.users import Users
-# from utils.dataclasses.user import UserData
 
 
 @pytest.mark.acceptance

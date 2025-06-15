@@ -1,5 +1,4 @@
 import allure
-import pytest
 from utils import ENV
 from page_objects.login_page import LoginPage
 
