@@ -14,8 +14,8 @@ class BaseTestCase(BaseCase):
 
     def setUp(self, **kwargs):
         super().setUp()
-        self.driver = self.get_new_driver(browser="chrome", headless=True, user_data_dir=None)
-        # self.maximize_window()
+        # self.driver = self.get_new_driver(browser="chrome", headless=True, user_data_dir=None)
+        self.maximize_window()
         self.open_page()
 
     def tearDown(self):
