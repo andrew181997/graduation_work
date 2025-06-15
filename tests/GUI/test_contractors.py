@@ -67,7 +67,7 @@ class TestContractorPage(Contractors, ContractorsFilters):
 
 
 
-    @allure.title("Архивация")
+    @allure.title("Архивация контрагента")
     def test_archive_contractor(self):
         contractor = ContractorData()
         contractor_name = contractor.name
