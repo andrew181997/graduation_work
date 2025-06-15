@@ -28,7 +28,7 @@ from typing import List, Dict, Any
 class ContractorData:
     editByOwnerOnly: int = 0
     name: str = f"test_party_{uuid.uuid4().hex[:8]}"
-    partyRoles: List[str] = field(default_factory=lambda: ["SLA_SUPPLIER", "SERVICE_SUPPLIER", "CUSTOMER"])
+    partyRoles: List[str] = field(default_factory=lambda: ["SERVICE_SUPPLIER", "CUSTOMER"])
     status: str = "ACTIVE"
     addressDto: Dict[str, Any] = field(default_factory=dict)
     users: List[Dict[str, Any]] = field(default_factory=list)

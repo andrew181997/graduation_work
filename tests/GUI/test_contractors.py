@@ -23,7 +23,7 @@ class TestContractorPage(Contractors, ContractorsFilters):
         self.wait_for_spinner_absence()
         self.click(EntityListElements.main_button)
         self.wait_for_spinner_absence()
-        entity_id = Contractors.create_new_contractor(self, name=TestContractorPage.name)
+        entity_id = Contractors.create_new_contractor(self, name=TestContractorPage.name, add_user=True)
         self.click(Contractors.contractor_users_tab)
         self.click(Contractors.users_delete)
         self.wait_for_element_visible(EntityListElements.dialog_actions)
@@ -273,7 +273,6 @@ class TestContractorPage(Contractors, ContractorsFilters):
 
             # Проверка сохранения изменений
             self.click(f"//span[text()= '{contractor_name}']")
-            time.sleep(5)
             is_checked = self.get_attribute(Contractors.role_sla_supplier + ">label>span>input", "aria-checked")
             self.attach_report_screenshot()
             assert is_checked == 'true', "Изменение не было сохранено после ухода со страницы"
