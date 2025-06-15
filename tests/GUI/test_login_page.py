@@ -4,8 +4,7 @@ from utils import ENV
 from page_objects.login_page import LoginPage
 
 
-@allure.suite("Проверка страницы авторизации")
-@pytest.mark.smoke
+
 class LoginTest(LoginPage):
 
     @allure.title("Проверка элементов на странице авторизации")
@@ -40,7 +39,7 @@ class LoginTest(LoginPage):
             self.attach_report_screenshot()
             assert self.get_text(self.password_validation_massage) == "введите пароль"
 
-    @allure.severity("blocker")
+
     @allure.title("Пользователь может авторизоваться на сайте")
     @allure.description("""Тест авторизуется под учетной записью администратора и оператора, после
     чего ожидает появления иконки пользователя в боковой панели меню""")

@@ -1,6 +1,6 @@
 """====================URL==================="""
 PROTOCOL = "http"
-HOST = "10.11.11.51"
+HOST = "10.11.11.53"
 PORT = "8080"
 WISLA_URL = f"{PROTOCOL}://{HOST}:{PORT}"
 
